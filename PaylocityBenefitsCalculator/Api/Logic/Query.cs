@@ -8,10 +8,14 @@ namespace Api.Logic;
 public class Query
 {
     private readonly DatabaseConnection _connection;
+    private readonly PaycheckCalculator _paycheck;
 
-    public Query(DatabaseConnection connection)
+    public Query(
+        DatabaseConnection connection,
+        PaycheckCalculator paycheck)
     {
         _connection = connection;
+        _paycheck = paycheck;
     }
 
     public async Task<List<GetEmployeeDto>> AllEmployees()
@@ -50,6 +54,17 @@ public class Query
 
         var dto = ConvertDependentToDto(dependent);
         return dto;
+    }
+
+    public async Task<GetPaycheckDto?> GetPaycheck(int employeeId)
+    {
+        var employee = await _connection.GetEmployee(employeeId);
+        if (employee == null)
+        {
+            return null;
+        }
+        var paycheck = _paycheck.GetPaycheck(employee, DateTime.Now);
+        return paycheck;
     }
 
     private static GetEmployeeDto ConvertEmployeeToDto(Employee employee)

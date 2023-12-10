@@ -21,7 +21,9 @@ builder.Services.AddSingleton<DatabaseConnection>();
 builder.Services.AddSingleton<Query>();
 builder.Services.AddSingleton<Command>();
 builder.Services.AddSingleton<Validity>();
+builder.Services.AddSingleton<PaycheckCalculator>();
 
+// infra
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

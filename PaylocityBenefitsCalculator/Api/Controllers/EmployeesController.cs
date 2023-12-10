@@ -12,14 +12,15 @@ namespace Api.Controllers;
 public class EmployeesController : ControllerBase
 {
     private readonly Query _query;
+
     public EmployeesController(Query query)
     {
-        _query = query;   
+        _query = query;
     }
 
     [SwaggerOperation(Summary = "Get employee by id")]
     [HttpGet("{id}")]
-    public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> Get(int id)
+    public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> GetPaycheck(int id)
     {
         var employee = await _query.Employee(id);
 
@@ -31,6 +32,25 @@ public class EmployeesController : ControllerBase
         var result = new ApiResponse<GetEmployeeDto>
         {
             Data = employee,
+            Success = true
+        };
+
+        return result;
+    }
+
+    [SwaggerOperation(Summary = "Get latest paycheck by employee id")]
+    [HttpGet("{id}/paycheck")]
+    public async Task<ActionResult<ApiResponse<GetPaycheckDto>>> Get(int id)
+    {
+        var paycheck = await _query.GetPaycheck(id);
+        if (paycheck == null)
+        {
+            return NotFound();
+        }
+
+        var result = new ApiResponse<GetPaycheckDto>
+        {
+            Data = paycheck,
             Success = true
         };
 
