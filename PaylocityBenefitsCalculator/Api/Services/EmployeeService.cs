@@ -14,6 +14,7 @@ public class EmployeeService
         _connection = connection;
         _paycheck = paycheck;
     }
+
     public async Task<GetPaycheckDto?> GetPaycheck(int employeeId)
     {
         var employee = await _connection.GetEmployee(employeeId);

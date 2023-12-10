@@ -27,7 +27,7 @@ SELECT e.Id as EmployeeId,
        d.Relationship as DependentRelationship
 FROM Employee e
 LEFT JOIN Dependent d ON d.EmployeeId = e.Id
-WHERE e.Id == @EmployeeId
+WHERE e.Id = @EmployeeId
 ";
 
     public async Task<GetEmployeeDto?> GetEmployee(int id)
