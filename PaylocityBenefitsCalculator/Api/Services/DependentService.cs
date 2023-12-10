@@ -1,7 +1,6 @@
 using Api.Database;
 using Api.Dtos.Dependent;
 using Api.Dtos.Errors;
-using Api.Logic;
 using Api.Models.Exceptions;
 
 namespace Api.Services;

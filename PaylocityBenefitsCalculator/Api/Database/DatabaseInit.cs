@@ -14,7 +14,7 @@ public class DatabaseInit
 
     public async Task Init()
     {
-        using var connection = new SqliteConnection(_config.Name);
+        await using var connection = new SqliteConnection(_config.Name);
 
         var table = await connection.QueryAsync<string>(
             "SELECT name FROM sqlite_master WHERE type='table' AND name = 'Employee';");

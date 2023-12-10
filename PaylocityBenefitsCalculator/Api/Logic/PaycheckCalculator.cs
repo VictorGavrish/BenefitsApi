@@ -1,5 +1,4 @@
 using Api.Dtos.Employee;
-using Api.Models;
 
 namespace Api.Logic;
 

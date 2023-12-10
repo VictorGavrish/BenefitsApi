@@ -1,6 +1,5 @@
 using Api.Dtos.Dependent;
 using Api.Dtos.Employee;
-using Api.Models;
 using Dapper;
 using Microsoft.Data.Sqlite;
 
@@ -94,7 +93,6 @@ FROM Dependent
     }
 
     private const string AddDependentCommand = @"
-
 INSERT INTO Dependent (FirstName, LastName, DateOfBirth, Relationship, EmployeeId)
 VALUES
     (@FirstName, @LastName, @DateOfBirth, @Relationship, @EmployeeId);
@@ -119,9 +117,9 @@ SELECT last_insert_rowid();
     {
         var employees = employeeRows
             .GroupBy(er => er.EmployeeId)
-            .Select(g =>
+            .Select(grouping =>
             {
-                var first = g.First();
+                var first = grouping.First();
                 var employee = new GetEmployeeDto
                 {
                     Id = first.EmployeeId,
@@ -130,7 +128,7 @@ SELECT last_insert_rowid();
                     Salary = first.EmployeeSalary,
                     DateOfBirth = first.EmployeeDateOfBirth
                 };
-                var dependents = g.Where(g => g.DependentId.HasValue)
+                var dependents = grouping.Where(g => g.DependentId.HasValue)
                     .Select(g =>
                     {
                         var dependentId = g.DependentId ?? throw new Exception("Unexpected null value");

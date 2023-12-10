@@ -1,5 +1,3 @@
-using Api.Models;
-
 namespace Api.Dtos.Dependent;
 
 public class AddDependentDto

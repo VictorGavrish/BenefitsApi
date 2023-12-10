@@ -1,7 +1,4 @@
-﻿using Api.Database;
-using Api.Dtos.Dependent;
-using Api.Dtos.Errors;
-using Api.Logic;
+﻿using Api.Dtos.Dependent;
 using Api.Models;
 using Api.Models.Exceptions;
 using Api.Services;
@@ -22,7 +19,7 @@ public class DependentsController : ControllerBase
     }
 
     [SwaggerOperation(Summary = "Get dependent by id")]
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<ApiResponse<GetDependentDto>>> Get(int id)
     {
         var dependent = await _dependentService.GetDependent(id);
@@ -61,8 +58,8 @@ public class DependentsController : ControllerBase
         {
             var result = new ApiResponse<object>
             {
-                Data = ex.Data,
-                Message = ex.Message,
+                Data = ex.ErrorData,
+                Message = "An error occurred",
                 Error = ex.Message,
                 Success = false
             };

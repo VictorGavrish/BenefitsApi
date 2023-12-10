@@ -2,5 +2,5 @@ namespace Api.Dtos.Errors;
 
 public class ValidationError
 {
-    public List<string> Errors { get; set; }
+    public List<string> Errors { get; set; } = new();
 }

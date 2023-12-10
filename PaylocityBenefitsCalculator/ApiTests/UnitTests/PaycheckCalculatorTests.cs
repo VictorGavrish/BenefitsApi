@@ -11,7 +11,7 @@ namespace ApiTests.UnitTests;
 public class PaycheckCalculatorTests
 {
     [Fact]
-    void WhenCalculatingPaycheck_ShouldGiveCorrectSalary()
+    public void WhenCalculatingPaycheck_ShouldGiveCorrectSalary()
     {
         var calc = new PaycheckCalculator();
         var dob = new DateTime(2000, 01, 01);
@@ -32,7 +32,7 @@ public class PaycheckCalculatorTests
     }
 
     [Fact]
-    void WhenCalculatingPaycheck_ShouldGive1000WithoutAdditionalThings()
+    public void WhenCalculatingPaycheck_ShouldGive1000WithoutAdditionalThings()
     {
         var calc = new PaycheckCalculator();
         var dob = new DateTime(2000, 01, 01);
@@ -56,7 +56,7 @@ public class PaycheckCalculatorTests
     }
 
     [Fact]
-    void WhenCalculatingPaycheck_ShouldGive600AdditionalBenefitsPerDependent()
+    public void WhenCalculatingPaycheck_ShouldGive600AdditionalBenefitsPerDependent()
     {
         var calc = new PaycheckCalculator();
         var dob = new DateTime(2000, 01, 01);
@@ -91,7 +91,7 @@ public class PaycheckCalculatorTests
     }
 
     [Fact]
-    void WhenCalculatingPaycheck_ShouldGive2PercentAdditionalBenefitsOver80000Salary()
+    public void WhenCalculatingPaycheck_ShouldGive2PercentAdditionalBenefitsOver80000Salary()
     {
         var calc = new PaycheckCalculator();
         var dob = new DateTime(2000, 01, 01);
@@ -117,7 +117,7 @@ public class PaycheckCalculatorTests
     
 
     [Fact]
-    void WhenCalculatingPaycheck_ShouldGive200AdditionalBenefitsPerDependentOver50()
+    public void WhenCalculatingPaycheck_ShouldGive200AdditionalBenefitsPerDependentOver50()
     {
         var calc = new PaycheckCalculator();
         var dob = new DateTime(1974, 01, 01);

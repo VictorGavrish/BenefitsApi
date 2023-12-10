@@ -1,6 +1,4 @@
-﻿using Api.Database;
-using Api.Dtos.Employee;
-using Api.Logic;
+﻿using Api.Dtos.Employee;
 using Api.Models;
 using Api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +18,7 @@ public class EmployeesController : ControllerBase
     }
 
     [SwaggerOperation(Summary = "Get employee by id")]
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> GetPaycheck(int id)
     {
         var employee = await _employeeService.GetEmployee(id);
@@ -40,7 +38,7 @@ public class EmployeesController : ControllerBase
     }
 
     [SwaggerOperation(Summary = "Get latest paycheck by employee id")]
-    [HttpGet("{id}/paycheck")]
+    [HttpGet("{id:int}/paycheck")]
     public async Task<ActionResult<ApiResponse<GetPaycheckDto>>> Get(int id)
     {
         var paycheck = await _employeeService.GetPaycheck(id);
