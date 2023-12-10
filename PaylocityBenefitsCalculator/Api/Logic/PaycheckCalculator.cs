@@ -26,10 +26,13 @@ public class PaycheckCalculator
             benefitDeductions += employee.Salary * AdditionalBenefitsFraction / PaychecksPerYear;
         }
 
-        var age = CalculateAge(employee.DateOfBirth, time.Date);
-        if (age >= AgeForAdditionalBenefitsForAge)
+        foreach (var dependent in employee.Dependents)
         {
-            benefitDeductions += AdditionalBenefitsForAge / PaychecksPerYear;
+            var age = CalculateAge(dependent.DateOfBirth, time);
+            if (age >= AgeForAdditionalBenefitsForAge)
+            {
+                benefitDeductions += AdditionalBenefitsForAge / PaychecksPerYear;
+            }
         }
 
         var paycheck = new GetPaycheckDto

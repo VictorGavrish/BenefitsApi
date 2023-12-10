@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Api.Dtos.Dependent;
-using Api.Models;
 using Xunit;
 
 namespace ApiTests.IntegrationTests;

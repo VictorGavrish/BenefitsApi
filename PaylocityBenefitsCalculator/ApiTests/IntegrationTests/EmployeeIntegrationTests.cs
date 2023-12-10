@@ -4,7 +4,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Api.Dtos.Dependent;
 using Api.Dtos.Employee;
-using Api.Models;
 using Xunit;
 
 namespace ApiTests.IntegrationTests;
