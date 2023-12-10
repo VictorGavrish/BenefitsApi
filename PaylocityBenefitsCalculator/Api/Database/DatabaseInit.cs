@@ -1,7 +1,7 @@
 using Dapper;
 using Microsoft.Data.Sqlite;
 
-namespace Api.Data;
+namespace Api.Database;
 
 public class DatabaseInit
 {

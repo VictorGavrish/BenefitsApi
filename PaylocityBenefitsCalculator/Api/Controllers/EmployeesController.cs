@@ -1,5 +1,4 @@
-﻿using Api.Data;
-using Api.Dtos.Dependent;
+﻿using Api.Database;
 using Api.Dtos.Employee;
 using Api.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +20,15 @@ public class EmployeesController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> Get(int id)
     {
-        throw new NotImplementedException();
+        var employee = await _query.Employee(id);
+
+        var result = new ApiResponse<GetEmployeeDto>
+        {
+            Data = employee,
+            Success = true
+        };
+
+        return result;
     }
 
     [SwaggerOperation(Summary = "Get all employees")]

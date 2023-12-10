@@ -2,7 +2,7 @@ using Api.Models;
 using Dapper;
 using Microsoft.Data.Sqlite;
 
-namespace Api.Data;
+namespace Api.Database;
 
 public class DatabaseConnection
 {
@@ -13,24 +13,89 @@ public class DatabaseConnection
         _config = config;
     }
 
-    private class EmployeeRow
+    private const string EmployeeQuery = @"
+SELECT e.Id as EmployeeId,
+       e.FirstName as EmployeeFirstName,
+       e.LastName as EmployeeLastName,
+       e.Salary as EmployeeSalary,
+       e.DateOfBirth as EmployeeDateOfBirth,
+       d.Id as DependentId,
+       d.FirstName as DependentFirstName,
+       d.LastName as DependentLastName,
+       d.DateOfBirth as DependentDateOfBirth,
+       d.Relationship as DependentRelationship
+FROM Employee e
+LEFT JOIN Dependent d ON d.EmployeeId = e.Id
+WHERE e.Id == @EmployeeId
+";
+    
+    public async Task<Employee?> GetEmployee(int id)
     {
-        public int EmployeeId { get; set; }
-        public string? EmployeeFirstName { get; set; }
-        public string? EmployeeLastName { get; set; }
-        public decimal EmployeeSalary { get; set; }
-        public DateTime EmployeeDateOfBirth { get; set; }
-        public int? DependentId { get; set; }
-        public string? DependentFirstName { get; set; }
-        public string? DependentLastName { get; set; }
-        public DateTime? DependentDateOfBirth { get; set; }
-        public Relationship? DependentRelationship { get; set; }
+        await using var connection = CreateConnection();
+        var employeeRows = await connection.QueryAsync<EmployeeRow>(EmployeeQuery, new { EmployeeId = id });
+        if (!employeeRows.Any())
+        {
+            return null;
+        }
+        var employee = ConvertEmployeeRowsToEmployees(employeeRows).Single();
+        return employee;
     }
+
+    private const string AllEmployeesQuery = @"
+SELECT e.Id as EmployeeId,
+       e.FirstName as EmployeeFirstName,
+       e.LastName as EmployeeLastName,
+       e.Salary as EmployeeSalary,
+       e.DateOfBirth as EmployeeDateOfBirth,
+       d.Id as DependentId,
+       d.FirstName as DependentFirstName,
+       d.LastName as DependentLastName,
+       d.DateOfBirth as DependentDateOfBirth,
+       d.Relationship as DependentRelationship
+FROM Employee e
+LEFT JOIN Dependent d ON d.EmployeeId = e.Id
+";
 
     public async Task<List<Employee>> GetAllEmployees()
     {
+        await using var connection = CreateConnection();
+        var employeeRows = await connection.QueryAsync<EmployeeRow>(AllEmployeesQuery);
+        var employees = ConvertEmployeeRowsToEmployees(employeeRows);
+        return employees;
+    }
+
+    private const string DependentQuery = @"
+SELECT Id, FirstName, LastName, DateOfBirth, Relationship, EmployeeId
+FROM Dependent
+WHERE Id = @DependentId
+";
+    
+    public async Task<Dependent?> GetDependent(int id)
+    {
+        await using var connection = CreateConnection();
+        var dependent = await connection.QuerySingleOrDefaultAsync<Dependent>(DependentQuery, new { DependentId = id });
+        return dependent;
+    }
+
+    private const string AllDependentsQuery = @"
+SELECT Id, FirstName, LastName, DateOfBirth, Relationship, EmployeeId
+FROM Dependent
+";
+    public async Task<List<Dependent>> GetAllDependents()
+    {
+        await using var connection = CreateConnection();
+        var dependents = await connection.QueryAsync<Dependent>(AllDependentsQuery);
+        return dependents.ToList();
+    }
+
+    private SqliteConnection CreateConnection()
+    {
         var connection = new SqliteConnection(_config.Name);
-        var employeeRows = await connection.QueryAsync<EmployeeRow>(GetAllEmployeesQuery);
+        return connection;
+    }
+
+    private static List<Employee> ConvertEmployeeRowsToEmployees(IEnumerable<EmployeeRow> employeeRows)
+    {
         var employees = employeeRows
             .GroupBy(er => er.EmployeeId)
             .Select(g =>
@@ -63,18 +128,17 @@ public class DatabaseConnection
         return employees;
     }
 
-    private const string GetAllEmployeesQuery = @"
-SELECT e.Id as EmployeeId,
-       e.FirstName as EmployeeFirstName,
-       e.LastName as EmployeeLastName,
-       e.Salary as EmployeeSalary,
-       e.DateOfBirth as EmployeeDateOfBirth,
-       d.Id as DependentId,
-       d.FirstName as DependentFirstName,
-       d.LastName as DependentLastName,
-       d.DateOfBirth as DependentDateOfBirth,
-       d.Relationship as DependentRelationship
-FROM Employee e
-LEFT JOIN Dependent d ON d.EmployeeId = e.Id
-";
+    private class EmployeeRow
+    {
+        public int EmployeeId { get; set; }
+        public string? EmployeeFirstName { get; set; }
+        public string? EmployeeLastName { get; set; }
+        public decimal EmployeeSalary { get; set; }
+        public DateTime EmployeeDateOfBirth { get; set; }
+        public int? DependentId { get; set; }
+        public string? DependentFirstName { get; set; }
+        public string? DependentLastName { get; set; }
+        public DateTime? DependentDateOfBirth { get; set; }
+        public Relationship? DependentRelationship { get; set; }
+    }
 }

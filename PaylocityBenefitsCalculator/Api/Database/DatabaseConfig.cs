@@ -1,4 +1,4 @@
-namespace Api.Data;
+namespace Api.Database;
 
 public class DatabaseConfig
 {

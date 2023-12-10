@@ -1,4 +1,4 @@
-using Api.Data;
+using Api.Database;
 using Microsoft.Data.Sqlite;
 using Microsoft.OpenApi.Models;
 

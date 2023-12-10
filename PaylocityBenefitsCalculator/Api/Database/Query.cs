@@ -2,7 +2,7 @@ using Api.Dtos.Dependent;
 using Api.Dtos.Employee;
 using Api.Models;
 
-namespace Api.Data;
+namespace Api.Database;
 
 public class Query
 {
@@ -18,6 +18,37 @@ public class Query
         var employees = await _connection.GetAllEmployees();
         var dtos = employees.Select(ConvertEmployeeToDto).ToList();
         return dtos;
+    }
+
+    public async Task<GetEmployeeDto?> Employee(int id)
+    {
+        var employee = await _connection.GetEmployee(id);
+        if (employee == null)
+        {
+            return null;
+        }
+
+        var dto = ConvertEmployeeToDto(employee);
+        return dto;
+    }
+
+    public async Task<List<GetDependentDto>> AllDependents()
+    {
+        var dependents = await _connection.GetAllDependents();
+        var dtos = dependents.Select(ConvertDependentToDto).ToList();
+        return dtos;
+    }
+
+    public async Task<GetDependentDto?> Dependent(int id)
+    {
+        var dependent = await _connection.GetDependent(id);
+        if (dependent == null)
+        {
+            return null;
+        }
+
+        var dto = ConvertDependentToDto(dependent);
+        return dto;
     }
 
     private static GetEmployeeDto ConvertEmployeeToDto(Employee employee)
