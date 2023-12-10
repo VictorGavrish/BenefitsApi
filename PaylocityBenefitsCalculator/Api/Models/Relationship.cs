@@ -2,9 +2,9 @@ namespace Api.Models;
 
 public enum Relationship
 {
-    None,
-    Spouse,
-    DomesticPartner,
-    Child
+    None = 0,
+    Spouse = 1,
+    DomesticPartner = 2,
+    Child = 3
 }
 

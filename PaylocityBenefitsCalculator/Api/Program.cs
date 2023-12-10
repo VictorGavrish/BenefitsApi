@@ -1,10 +1,24 @@
+using Api.Data;
+using Microsoft.Data.Sqlite;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+// Configure Sqlite DB
+var dbConfig = new DatabaseConfig
+{
+    Name = "Data Source=db.sqlite"
+};
+
+var dbInit = new DatabaseInit(dbConfig);
+await dbInit.Init();
+builder.Services.AddSingleton<DatabaseConfig>(dbConfig);
+builder.Services.AddSingleton<DatabaseConnection>();
+builder.Services.AddSingleton<Query>();
 
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
