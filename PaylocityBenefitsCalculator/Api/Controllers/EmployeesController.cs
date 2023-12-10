@@ -22,6 +22,11 @@ public class EmployeesController : ControllerBase
     {
         var employee = await _query.Employee(id);
 
+        if (employee == null)
+        {
+            return NotFound();
+        }
+
         var result = new ApiResponse<GetEmployeeDto>
         {
             Data = employee,

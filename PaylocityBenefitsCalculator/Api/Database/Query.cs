@@ -53,7 +53,7 @@ public class Query
 
     private static GetEmployeeDto ConvertEmployeeToDto(Employee employee)
     {
-        var dependents = employee.Dependents.Select(ConvertDependentToDto).ToList();
+        var dependents = employee.Dependents.Select(ConvertDependentToDto).OrderBy(d => d.Id).ToList();
         var dto = new GetEmployeeDto
         {
             Id = employee.Id,
