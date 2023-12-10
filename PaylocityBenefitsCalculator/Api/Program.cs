@@ -1,6 +1,6 @@
 using Api.Database;
 using Api.Logic;
-using Microsoft.Data.Sqlite;
+using Api.Services;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,14 +14,17 @@ var dbConfig = new DatabaseConfig
 
 var dbInit = new DatabaseInit(dbConfig);
 await dbInit.Init();
+
 builder.Services.AddSingleton(dbConfig);
 builder.Services.AddSingleton<DatabaseConnection>();
 
 // logic
-builder.Services.AddSingleton<Query>();
-builder.Services.AddSingleton<Command>();
-builder.Services.AddSingleton<Validity>();
 builder.Services.AddSingleton<PaycheckCalculator>();
+
+// services
+builder.Services.AddSingleton<DependentService>();
+builder.Services.AddSingleton<EmployeeService>();
+builder.Services.AddSingleton<ValidationService>();
 
 // infra
 builder.Services.AddControllers();

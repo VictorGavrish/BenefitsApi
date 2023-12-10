@@ -16,7 +16,7 @@ public class PaycheckCalculator
     private const int AgeForAdditionalBenefitsForAge = 50;
     private const decimal AdditionalBenefitsFraction = 0.02m;
     
-    public GetPaycheckDto GetPaycheck(Employee employee, DateTime time)
+    public GetPaycheckDto GetPaycheck(GetEmployeeDto employee, DateTime time)
     {
         var salary = employee.Salary / PaychecksPerYear;
         var benefitDeductions = BaseBenefits / PaychecksPerYear;

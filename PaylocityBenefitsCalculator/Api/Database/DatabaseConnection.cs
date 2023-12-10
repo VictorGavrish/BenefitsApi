@@ -1,4 +1,5 @@
 using Api.Dtos.Dependent;
+using Api.Dtos.Employee;
 using Api.Models;
 using Dapper;
 using Microsoft.Data.Sqlite;
@@ -29,8 +30,8 @@ FROM Employee e
 LEFT JOIN Dependent d ON d.EmployeeId = e.Id
 WHERE e.Id == @EmployeeId
 ";
-    
-    public async Task<Employee?> GetEmployee(int id)
+
+    public async Task<GetEmployeeDto?> GetEmployee(int id)
     {
         await using var connection = CreateConnection();
         var employeeRows = await connection.QueryAsync<EmployeeRow>(EmployeeQuery, new { EmployeeId = id });
@@ -38,6 +39,7 @@ WHERE e.Id == @EmployeeId
         {
             return null;
         }
+
         var employee = ConvertEmployeeRowsToEmployees(employeeRows).Single();
         return employee;
     }
@@ -57,7 +59,7 @@ FROM Employee e
 LEFT JOIN Dependent d ON d.EmployeeId = e.Id
 ";
 
-    public async Task<List<Employee>> GetAllEmployees()
+    public async Task<List<GetEmployeeDto>> GetAllEmployees()
     {
         await using var connection = CreateConnection();
         var employeeRows = await connection.QueryAsync<EmployeeRow>(AllEmployeesQuery);
@@ -70,11 +72,12 @@ SELECT Id, FirstName, LastName, DateOfBirth, Relationship, EmployeeId
 FROM Dependent
 WHERE Id = @DependentId
 ";
-    
-    public async Task<Dependent?> GetDependent(int id)
+
+    public async Task<GetDependentDto?> GetDependent(int id)
     {
         await using var connection = CreateConnection();
-        var dependent = await connection.QuerySingleOrDefaultAsync<Dependent>(DependentQuery, new { DependentId = id });
+        var dependent =
+            await connection.QuerySingleOrDefaultAsync<GetDependentDto>(DependentQuery, new { DependentId = id });
         return dependent;
     }
 
@@ -82,10 +85,11 @@ WHERE Id = @DependentId
 SELECT Id, FirstName, LastName, DateOfBirth, Relationship, EmployeeId
 FROM Dependent
 ";
-    public async Task<List<Dependent>> GetAllDependents()
+
+    public async Task<List<GetDependentDto>> GetAllDependents()
     {
         await using var connection = CreateConnection();
-        var dependents = await connection.QueryAsync<Dependent>(AllDependentsQuery);
+        var dependents = await connection.QueryAsync<GetDependentDto>(AllDependentsQuery);
         return dependents.ToList();
     }
 
@@ -96,6 +100,7 @@ VALUES
     (@FirstName, @LastName, @DateOfBirth, @Relationship, @EmployeeId);
 SELECT last_insert_rowid();
 ";
+
     public async Task<GetDependentDto> AddDependent(AddDependentDto addDependent)
     {
         await using var connection = CreateConnection();
@@ -110,14 +115,14 @@ SELECT last_insert_rowid();
         return connection;
     }
 
-    private static List<Employee> ConvertEmployeeRowsToEmployees(IEnumerable<EmployeeRow> employeeRows)
+    private static List<GetEmployeeDto> ConvertEmployeeRowsToEmployees(IEnumerable<EmployeeRow> employeeRows)
     {
         var employees = employeeRows
             .GroupBy(er => er.EmployeeId)
             .Select(g =>
             {
                 var first = g.First();
-                var employee = new Employee
+                var employee = new GetEmployeeDto
                 {
                     Id = first.EmployeeId,
                     FirstName = first.EmployeeFirstName,
@@ -126,16 +131,21 @@ SELECT last_insert_rowid();
                     DateOfBirth = first.EmployeeDateOfBirth
                 };
                 var dependents = g.Where(g => g.DependentId.HasValue)
-                    .Select(g => new Dependent
+                    .Select(g =>
                     {
-                        Id = g.DependentId.Value,
-                        FirstName = g.DependentFirstName,
-                        LastName = g.DependentLastName,
-                        DateOfBirth = g.DependentDateOfBirth.Value,
-                        Relationship = g.DependentRelationship.Value,
-                        EmployeeId = first.EmployeeId,
-                        Employee = employee
+                        var dependentId = g.DependentId ?? throw new Exception("Unexpected null value");
+                        var dob = g.DependentDateOfBirth ?? throw new Exception("Unexpected null value");
+                        var relationship = g.DependentRelationship ?? throw new Exception("Unexpected null value");
+                        return new GetDependentDto
+                        {
+                            Id = dependentId,
+                            FirstName = g.DependentFirstName,
+                            LastName = g.DependentLastName,
+                            DateOfBirth = dob,
+                            Relationship = relationship
+                        };
                     })
+                    .OrderBy(d => d.Id)
                     .ToList();
                 employee.Dependents = dependents;
                 return employee;

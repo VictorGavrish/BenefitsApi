@@ -4,6 +4,7 @@ using Api.Dtos.Errors;
 using Api.Logic;
 using Api.Models;
 using Api.Models.Exceptions;
+using Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -13,20 +14,18 @@ namespace Api.Controllers;
 [Route("api/v1/[controller]")]
 public class DependentsController : ControllerBase
 {
-    private readonly Query _query;
-    private readonly Command _command;
+    private readonly DependentService _dependentService;
 
-    public DependentsController(Query query, Command command)
+    public DependentsController(DependentService dependentService)
     {
-        _query = query;
-        _command = command;
+        _dependentService = dependentService;
     }
 
     [SwaggerOperation(Summary = "Get dependent by id")]
     [HttpGet("{id}")]
     public async Task<ActionResult<ApiResponse<GetDependentDto>>> Get(int id)
     {
-        var dependent = await _query.Dependent(id);
+        var dependent = await _dependentService.GetDependent(id);
 
         if (dependent == null)
         {
@@ -48,7 +47,7 @@ public class DependentsController : ControllerBase
     {
         try
         {
-            var created = await _command.AddDependent(dependentDto);
+            var created = await _dependentService.AddDependent(dependentDto);
 
             var result = new ApiResponse<GetDependentDto>
             {
@@ -75,7 +74,7 @@ public class DependentsController : ControllerBase
     [HttpGet("")]
     public async Task<ActionResult<ApiResponse<List<GetDependentDto>>>> GetAll()
     {
-        var dependents = await _query.AllDependents();
+        var dependents = await _dependentService.GetAllDependents();
 
         var result = new ApiResponse<List<GetDependentDto>>
         {

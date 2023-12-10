@@ -1,14 +1,13 @@
 using Api.Database;
 using Api.Dtos.Dependent;
-using Api.Models;
 
-namespace Api.Logic;
+namespace Api.Services;
 
-public class Validity
+public class ValidationService
 {
     private readonly DatabaseConnection _connection;
 
-    public Validity(DatabaseConnection connection)
+    public ValidationService(DatabaseConnection connection)
     {
         _connection = connection;
     }

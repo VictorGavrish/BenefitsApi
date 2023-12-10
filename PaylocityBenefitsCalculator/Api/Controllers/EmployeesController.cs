@@ -2,6 +2,7 @@
 using Api.Dtos.Employee;
 using Api.Logic;
 using Api.Models;
+using Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -11,18 +12,18 @@ namespace Api.Controllers;
 [Route("api/v1/[controller]")]
 public class EmployeesController : ControllerBase
 {
-    private readonly Query _query;
+    private readonly EmployeeService _employeeService;
 
-    public EmployeesController(Query query)
+    public EmployeesController(EmployeeService employeeService)
     {
-        _query = query;
+        _employeeService = employeeService;
     }
 
     [SwaggerOperation(Summary = "Get employee by id")]
     [HttpGet("{id}")]
     public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> GetPaycheck(int id)
     {
-        var employee = await _query.Employee(id);
+        var employee = await _employeeService.GetEmployee(id);
 
         if (employee == null)
         {
@@ -42,7 +43,7 @@ public class EmployeesController : ControllerBase
     [HttpGet("{id}/paycheck")]
     public async Task<ActionResult<ApiResponse<GetPaycheckDto>>> Get(int id)
     {
-        var paycheck = await _query.GetPaycheck(id);
+        var paycheck = await _employeeService.GetPaycheck(id);
         if (paycheck == null)
         {
             return NotFound();
@@ -61,7 +62,7 @@ public class EmployeesController : ControllerBase
     [HttpGet("")]
     public async Task<ActionResult<ApiResponse<List<GetEmployeeDto>>>> GetAll()
     {
-        var employees = await _query.AllEmployees();
+        var employees = await _employeeService.GetAllEmployees();
 
         var result = new ApiResponse<List<GetEmployeeDto>>
         {
