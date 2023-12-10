@@ -1,8 +1,9 @@
+using Api.Database;
 using Api.Dtos.Dependent;
 using Api.Dtos.Employee;
 using Api.Models;
 
-namespace Api.Database;
+namespace Api.Logic;
 
 public class Query
 {

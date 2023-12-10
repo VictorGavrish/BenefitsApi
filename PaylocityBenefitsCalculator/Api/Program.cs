@@ -1,4 +1,5 @@
 using Api.Database;
+using Api.Logic;
 using Microsoft.Data.Sqlite;
 using Microsoft.OpenApi.Models;
 
@@ -13,9 +14,13 @@ var dbConfig = new DatabaseConfig
 
 var dbInit = new DatabaseInit(dbConfig);
 await dbInit.Init();
-builder.Services.AddSingleton<DatabaseConfig>(dbConfig);
+builder.Services.AddSingleton(dbConfig);
 builder.Services.AddSingleton<DatabaseConnection>();
+
+// logic
 builder.Services.AddSingleton<Query>();
+builder.Services.AddSingleton<Command>();
+builder.Services.AddSingleton<Validity>();
 
 builder.Services.AddControllers();
 

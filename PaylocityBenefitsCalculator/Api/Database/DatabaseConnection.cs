@@ -1,3 +1,4 @@
+using Api.Dtos.Dependent;
 using Api.Models;
 using Dapper;
 using Microsoft.Data.Sqlite;
@@ -86,6 +87,21 @@ FROM Dependent
         await using var connection = CreateConnection();
         var dependents = await connection.QueryAsync<Dependent>(AllDependentsQuery);
         return dependents.ToList();
+    }
+
+    private const string AddDependentCommand = @"
+
+INSERT INTO Dependent (FirstName, LastName, DateOfBirth, Relationship, EmployeeId)
+VALUES
+    (@FirstName, @LastName, @DateOfBirth, @Relationship, @EmployeeId);
+SELECT last_insert_rowid();
+";
+    public async Task<GetDependentDto> AddDependent(AddDependentDto addDependent)
+    {
+        await using var connection = CreateConnection();
+        var id = await connection.ExecuteScalarAsync<int>(AddDependentCommand, addDependent);
+        var dependent = await connection.QuerySingleAsync<GetDependentDto>(DependentQuery, new { DependentId = id });
+        return dependent;
     }
 
     private SqliteConnection CreateConnection()
